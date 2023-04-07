@@ -26,6 +26,16 @@ provider:
   stage: dev
   region: us-east-1
 
+plugins:
+  - serverless-esbuild
+
+custom:
+  esbuild:
+    bundle: true
+    minify: false
+    platform: 'node'
+    target: 'node12'
+
 # you can add statements to the Lambda function's IAM Role here
 #  iam:
 #    role:
