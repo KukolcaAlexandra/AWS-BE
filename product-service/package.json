@@ -2,15 +2,22 @@
   "name": "product-service",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./esbuild/index.js",
   "type": "module",
+  "jest": {
+    "verbose": true,
+    "transform": {}
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest test"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "esbuild": "0.17.15",
     "serverless-esbuild": "1.43.0"
+  },
+  "dependencies": {
+    "jest": "29.5.0"
   }
 }

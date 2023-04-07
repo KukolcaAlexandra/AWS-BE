@@ -27,14 +27,16 @@ provider:
   region: us-east-1
 
 plugins:
-  - serverless-esbuild
+- serverless-jest-plugin
+- serverless-esbuild
 
 custom:
+  jest:
   esbuild:
     bundle: true
     minify: false
     platform: 'node'
-    target: 'node12'
+    target: 'node16'
 
 # you can add statements to the Lambda function's IAM Role here
 #  iam:

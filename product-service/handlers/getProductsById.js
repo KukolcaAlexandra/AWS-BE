@@ -1,10 +1,10 @@
-import { getProductsDataById } from '../service/data-model.js';
+import service from '../service/data-model.js';
 
 export const getProductsById = async (event) => {
   const { id } = event.pathParameters;
 
   try {
-    const data = await getProductsDataById(id);
+    const data = await service.getProductsDataById(id);
 
     if (!data) {
       return {
