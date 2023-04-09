@@ -27,7 +27,6 @@ provider:
   region: us-east-1
 
 plugins:
-- serverless-jest-plugin
 - serverless-esbuild
 
 custom:
