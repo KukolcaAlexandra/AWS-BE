@@ -1,8 +1,10 @@
-import service from '../service/data-model.js';
+//import service from '../service/data-model.js';
+import { getItemsFromDB } from '../service/db-service/db-client.js';
 
 export const getProductsList = async (event) => {
   try {
-    const data = await service.getProductsData();
+    //const data = await service.getProductsData();
+    const data = await getItemsFromDB();
     return {
       statusCode: 200,
       headers: {

@@ -25,6 +25,16 @@ provider:
   runtime: nodejs18.x
   stage: dev
   region: us-east-1
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:DeleteItem
+      Resource: '*'
+
 
 plugins:
 - serverless-esbuild
