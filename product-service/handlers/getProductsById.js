@@ -2,7 +2,7 @@ import { getItemFromDB } from "../service/db-service/db-client";
 
 export const getProductsById = async (event) => {
   const { id } = event.pathParameters;
-
+  console.log(`getProductsById id=${id} event=${event}`);
   try {
     const data = await getItemFromDB(id);
 

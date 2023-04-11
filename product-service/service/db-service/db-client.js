@@ -1,6 +1,8 @@
-import { ScanCommand, GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { ScanCommand, GetCommand } from "@aws-sdk/lib-dynamodb";
+import { TransactWriteItemsCommand } from '@aws-sdk/client-dynamodb';
 import { v1 as uuidv1 } from 'uuid';
 import { ddbDocClient } from "./create-dynamodb-client.js";
+import { ddbClient } from "./create-client.js";
 
 export async function getItemsFromDB() {
   try {
@@ -50,26 +52,39 @@ export async function createItemDB(data) {
   try {
     const { title, description, price, count } = data;
     const id = uuidv1();
-    const productParams = {
-      TableName: process.env.PRODUCTS_TABLE_NAME,
-      Item: {
-        id,
-        title,
-        description,
-        price,
-      },
+   
+    const input = {
+      TransactItems: [
+        {
+          Put: {
+            TableName: process.env.PRODUCTS_TABLE_NAME,
+            Item: {
+              id: { S: id },
+              title: { S: title},
+              description: { S: description},
+              price: { N: `${price}`},
+            },
+            ReturnValuesOnConditionCheckFailure: "NONE",
+          },
+        },
+        {
+          Put: {
+            TableName: process.env.STOCKS_TABLE_NAME,
+            Item: {
+              product_id: { S: id },
+              count: { N: `${count}`},
+            },
+            ReturnValuesOnConditionCheckFailure: "NONE",
+          },
+        },
+      ],
+      ReturnConsumedCapacity: "TOTAL",
+      ReturnItemCollectionMetrics: "NONE",
     };
-    const stocksParams = {
-      TableName: process.env.STOCKS_TABLE_NAME,
-      Item: {
-        product_id: id,
-        count,
-      },
-    };
-    await ddbDocClient.send(new PutCommand(productParams));
-    await ddbDocClient.send(new PutCommand(stocksParams));
 
+    await ddbDocClient.send(new TransactWriteItemsCommand(input));
   } catch (err) {
     console.log("Error", err.stack);
+    throw new Error(err);
   }
 }

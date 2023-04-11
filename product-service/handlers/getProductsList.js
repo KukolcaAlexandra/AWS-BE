@@ -2,6 +2,7 @@ import { getItemsFromDB } from '../service/db-service/db-client.js';
 
 export const getProductsList = async (event) => {
   try {
+    console.log('getProductsList event', event);
     const data = await getItemsFromDB();
     return {
       statusCode: 200,
