@@ -1,8 +1,8 @@
-import { getItemsFromDB } from '../service/db-service/db-client.js';
+import { createItemDB } from '../service/db-service/db-client.js';
 
-export const getProductsList = async (event) => {
+export const createProduct = async (event) => {
   try {
-    const data = await getItemsFromDB();
+    const data = await createItemDB(JSON.parse(event.body));
     return {
       statusCode: 200,
       headers: {

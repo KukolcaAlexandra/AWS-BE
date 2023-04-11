@@ -1,4 +1,4 @@
-import { ScanCommand, GetCommand } from "@aws-sdk/lib-dynamodb";
+import { ScanCommand, GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { v1 as uuidv1 } from 'uuid';
 import { ddbDocClient } from "./create-dynamodb-client.js";
 
@@ -40,6 +40,34 @@ export async function getItemFromDB(id) {
     console.log("Success - item added or updated stocks", stock);
 
     return {...product, count: stock.count};
+
+  } catch (err) {
+    console.log("Error", err.stack);
+  }
+}
+
+export async function createItemDB(data) {
+  try {
+    const { title, description, price, count } = data;
+    const id = uuidv1();
+    const productParams = {
+      TableName: process.env.PRODUCTS_TABLE_NAME,
+      Item: {
+        id,
+        title,
+        description,
+        price,
+      },
+    };
+    const stocksParams = {
+      TableName: process.env.STOCKS_TABLE_NAME,
+      Item: {
+        product_id: id,
+        count,
+      },
+    };
+    await ddbDocClient.send(new PutCommand(productParams));
+    await ddbDocClient.send(new PutCommand(stocksParams));
 
   } catch (err) {
     console.log("Error", err.stack);
