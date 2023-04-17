@@ -25,9 +25,18 @@ provider:
   runtime: nodejs18.x
   stage: dev
   region: us-east-1
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:DeleteItem
+      Resource: '*'
+
 
 plugins:
-- serverless-jest-plugin
 - serverless-esbuild
 
 custom:
@@ -73,15 +82,22 @@ functions:
     handler: index.getProductsList
     events:
       - http:
-          path: product
+          path: products
           method: get
           cors: true
   getProductsById:
     handler: index.getProductsById
     events:
       - http:
-          path: product/{id}
+          path: products/{id}
           method: get
+          cors: true
+  createProduct:
+    handler: index.createProduct
+    events:
+      - http:
+          path: products
+          method: post
           cors: true
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events

@@ -1,10 +1,10 @@
-import service from '../service/data-model.js';
+import { getItemFromDB } from "../service/db-service/db-client";
 
 export const getProductsById = async (event) => {
   const { id } = event.pathParameters;
-
+  console.log(`getProductsById id=${id} event=${event}`);
   try {
-    const data = await service.getProductsDataById(id);
+    const data = await getItemFromDB(id);
 
     if (!data) {
       return {
