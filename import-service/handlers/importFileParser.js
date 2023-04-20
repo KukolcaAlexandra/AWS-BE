@@ -1,5 +1,24 @@
-import { S3 } from "@aws-sdk/client-s3";
+import { S3, CopyObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import csv from 'csv-parser';
+
+const copyObject = async ({ client, bucket, key }) => {
+  const input = {
+    Bucket: bucket,
+    CopySource: `${bucket}/${key}`,
+    Key: key.replace('uploaded', 'parsed'),
+  };
+  const command = new CopyObjectCommand(input);
+  await client.send(command);
+}
+
+const deleteObject = async ({ client, bucket, key }) => {
+  const input = {
+    Bucket: bucket,
+    Key: key,
+  };
+  const command = new DeleteObjectCommand(input);
+  await client.send(command);
+}
 
 export const importFileParser = async (event, _context, callback) => {
   try {
@@ -25,6 +44,8 @@ export const importFileParser = async (event, _context, callback) => {
         callback(1, 'error');
       })
       .on('end', async () => {
+        await copyObject({ client, bucket, key })
+        await deleteObject({ client, bucket, key });
         callback(0, 'success');
     });
     
