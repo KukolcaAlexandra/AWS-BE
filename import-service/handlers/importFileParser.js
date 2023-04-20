@@ -1,9 +1,8 @@
 import { S3 } from "@aws-sdk/client-s3";
-const csv = require('csv-parser')
+import csv from 'csv-parser';
 
 export const importFileParser = async (event, _context, callback) => {
   try {
-    console.log('event', event);
     const client = new S3({ region: 'us-east-1' });
 
     const bucket = event.Records[0].s3.bucket.name;
@@ -35,5 +34,12 @@ export const importFileParser = async (event, _context, callback) => {
       body: event,
     };
   } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        message: 'Your function executed with error!',
+        input: event,
+      }, null, 2),
+    };
   }
 };

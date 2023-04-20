@@ -1,27 +1,38 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-
-const BUCKET = 'nodejs-aws-s3';
+import { S3Client } from "@aws-sdk/client-s3";
+import service from '../service/getSignedUrl';
 
 export const importProductsFile = async (event) => {
   const queryStringParameters = event.queryStringParameters;
+
+  if (!queryStringParameters?.name) {
+    return {
+      statusCode: 404,
+      body: JSON.stringify({
+        message: 'Name query parameter is missing',
+      }),
+    };
+  }
   const client = new S3Client({region: 'us-east-1'});
 
   const params = {
-    Bucket: BUCKET,
+    Bucket: process.env.BUCKET_NAME,
     Key: `uploaded/${queryStringParameters?.name}`,
   };
 
-  const command = new PutObjectCommand(params);
-
   try {
-    const signedUrl = await getSignedUrl(client, command, { expiresIn: 3600 });
-
+    const signedUrl = await service.getPresignedUrl(client, params);
     return {
       statusCode: 200,
       headers: { 'Access-Control-Allow-Origin': '*' },
       body: signedUrl,
     };
   } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        message: 'Your function executed with error!',
+        input: event,
+      }, null, 2),
+    };
   }
 };
