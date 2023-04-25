@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@aws-sdk/client-s3": "3.315.0",
+    "@aws-sdk/client-sqs": "3.319.0",
     "@aws-sdk/s3-request-presigner": "3.315.0",
     "csv-parser": "3.0.0",
     "serverless-esbuild": "1.43.1"

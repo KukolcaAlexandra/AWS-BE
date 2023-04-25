@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 import { getProductsList } from '../index.js';
-import service from '../service/data-model.js';
+import service from '../service/db-service/db-client.js';
 
 const mockList = [{ id: 1, title: 'Test1'}, { id: 2, title: 'Test2'}];
 
@@ -15,7 +15,7 @@ const expectedResult = {
 
 describe('test getProductsList function', () => {
   it('return 200 status and list of product', async () => {
-    const spy = jest.spyOn(service, 'getProductsData');
+    const spy = jest.spyOn(service, 'getItemsFromDB');
     spy.mockReturnValue(mockList);
 
     const result = await getProductsList();

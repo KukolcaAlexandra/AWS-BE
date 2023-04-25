@@ -35,6 +35,22 @@ provider:
       Action: 's3:*'
       Resource:
         - 'arn:aws:s3:::nodejs-aws-s3/*'
+    - Effect: Allow
+      Action:
+        - sqs:*
+      Resource: 'arn:aws:sqs:us-east-1:404553434652:catalog-items-queue'
+  
+  environment:
+    SQS_URL: 'https://sqs.us-east-1.amazonaws.com/404553434652/catalog-items-queue'
+    BUCKET_NAME: 'nodejs-aws-s3'
+    REGION: 'us-east-1'
+
+resources:
+  Resources:
+    SQSQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: nodejs-aws-sqs-queue
 
 plugins:
 - serverless-esbuild

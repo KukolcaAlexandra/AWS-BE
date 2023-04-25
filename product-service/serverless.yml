@@ -25,6 +25,7 @@ provider:
   runtime: nodejs18.x
   stage: dev
   region: us-east-1
+
   iamRoleStatements:
     - Effect: 'Allow'
       Action:
@@ -34,7 +35,61 @@ provider:
         - dynamodb:PutItem
         - dynamodb:DeleteItem
       Resource: '*'
+    - Effect: Allow
+      Action:
+        - sqs:*
+      Resource: 'arn:aws:sqs:us-east-1:404553434652:nodejs-aws-sqs-queue'
+    - Effect: Allow
+      Action:
+        - sqs:*
+      Resource:
+        - Fn::GetAtt: [ catalogItemsQueue, Arn ]
+    - Effect: Allow
+      Action: sns:*
+      Resource:
+        Ref: createProductTopic
 
+  environment:
+    PRODUCTS_TABLE_NAME: 'products'
+    STOCKS_TABLE_NAME: 'stocks'
+    SNS_ARN:
+      Ref: createProductTopic
+    REGION: 'us-east-1'
+
+resources:
+  Resources:
+    catalogItemsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: catalog-items-queue
+    createProductTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: create-product-topic
+    SNSSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: kukolcaalexandra@gmail.com
+        Protocol: email
+        TopicArn:
+          Ref: createProductTopic
+        FilterPolicy:
+          price:
+            - numeric:
+                - "<="
+                - 200
+    SNSSubscription2:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: alexandra_kukolca1@epam.com
+        Protocol: email
+        TopicArn:
+          Ref: createProductTopic
+        FilterPolicy:
+          price:
+            - numeric:
+                - ">"
+                - 200
 
 plugins:
 - serverless-esbuild
@@ -99,6 +154,16 @@ functions:
           path: products
           method: post
           cors: true
+  catalogBatchProcess:
+    handler: index.catalogBatchProcess
+    events:
+      - sqs:
+          batchSize: 5
+          arn:
+            Fn::GetAtt:
+              - catalogItemsQueue
+              - Arn
+
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details

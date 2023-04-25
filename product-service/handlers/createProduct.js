@@ -1,4 +1,4 @@
-import { createItemDB } from '../service/db-service/db-client.js';
+import dbService from '../service/db-service/db-client.js';
 
 export const createProduct = async (event) => {
   try {
@@ -14,7 +14,7 @@ export const createProduct = async (event) => {
         }),
       };
     }
-    await createItemDB(data);
+    await dbService.createItemDB(data);
     
     return {
       statusCode: 200,
