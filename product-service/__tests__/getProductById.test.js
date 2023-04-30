@@ -1,12 +1,12 @@
 import { jest } from '@jest/globals';
 import { getProductsById } from '../index.js';
-import service from '../service/data-model.js';
+import service from '../service/db-service/db-client.js';
 
 const mockData = { id: 5, title: 'Test' };
 
 describe('test getProductsById function', () => {
   it('return 200 status and found product', async () => {
-    const spy = jest.spyOn(service, 'getProductsDataById');
+    const spy = jest.spyOn(service, 'getItemFromDB');
     spy.mockReturnValue(mockData);
 
     const event = {
@@ -26,7 +26,7 @@ describe('test getProductsById function', () => {
   });
 
   it('return 404 error', async () => {
-    const spy = jest.spyOn(service, 'getProductsDataById');
+    const spy = jest.spyOn(service, 'getItemFromDB');
     spy.mockReturnValue();
 
     const event = {

@@ -12,7 +12,7 @@ export const importProductsFile = async (event) => {
       }),
     };
   }
-  const client = new S3Client({region: 'us-east-1'});
+  const client = new S3Client({region: process.env.REGION});
 
   const params = {
     Bucket: process.env.BUCKET_NAME,

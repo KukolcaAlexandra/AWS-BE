@@ -1,10 +1,10 @@
-import { getItemFromDB } from "../service/db-service/db-client";
+import service from "../service/db-service/db-client";
 
 export const getProductsById = async (event) => {
   const { id } = event.pathParameters;
   console.log(`getProductsById id=${id} event=${event}`);
   try {
-    const data = await getItemFromDB(id);
+    const data = await service.getItemFromDB(id);
 
     if (!data) {
       return {

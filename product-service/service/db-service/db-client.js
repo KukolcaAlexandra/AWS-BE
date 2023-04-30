@@ -2,9 +2,9 @@ import { ScanCommand, GetCommand } from "@aws-sdk/lib-dynamodb";
 import { TransactWriteItemsCommand } from '@aws-sdk/client-dynamodb';
 import { v1 as uuidv1 } from 'uuid';
 import { ddbDocClient } from "./create-dynamodb-client.js";
-import { ddbClient } from "./create-client.js";
+// import { ddbClient } from "./create-client.js";
 
-export async function getItemsFromDB() {
+async function getItemsFromDB() {
   try {
     const { Items: products } = await ddbDocClient.send(new ScanCommand({
       TableName: process.env.PRODUCTS_TABLE_NAME,
@@ -23,7 +23,7 @@ export async function getItemsFromDB() {
   }
 }
 
-export async function getItemFromDB(id) {
+async function getItemFromDB(id) {
   try {
     const { Item: product } = await ddbDocClient.send(new GetCommand({
       TableName: process.env.PRODUCTS_TABLE_NAME,
@@ -48,11 +48,11 @@ export async function getItemFromDB(id) {
   }
 }
 
-export async function createItemDB(data) {
+async function createItemDB(data) {
   try {
     const { title, description, price, count } = data;
     const id = uuidv1();
-   
+
     const input = {
       TransactItems: [
         {
@@ -87,4 +87,10 @@ export async function createItemDB(data) {
     console.log("Error", err.stack);
     throw new Error(err);
   }
+}
+
+export default {
+  getItemsFromDB,
+  getItemFromDB,
+  createItemDB
 }
