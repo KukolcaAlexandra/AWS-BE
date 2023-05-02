@@ -47,6 +47,15 @@ provider:
 
 resources:
   Resources:
+    GatewayResponseDefault4XX:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
     SQSQueue:
       Type: AWS::SQS::Queue
       Properties:
@@ -105,6 +114,12 @@ functions:
             parameters:
               querystrings:
                 name: true
+          authorizer: {
+            arn: 'arn:aws:lambda:us-east-1:404553434652:function:authorization-service-dev-basicAuthorizer',
+            type: 'token',
+            resultTtlInSeconds: 0,
+          }
+
   importFileParser:
     handler: index.importFileParser
     events:
@@ -114,6 +129,7 @@ functions:
           rules:
             - prefix: uploaded/
           existing: true
+
   
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
